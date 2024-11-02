@@ -30,6 +30,8 @@ Route::group(['prefix' => 'basic-ui'], function () {
     Route::get('unSave/{id}',[SaveController::class,'unSave']);
     Route::get('add/like/{id}/{userId}',[LikeController::class,'addLike']);
     Route::get('unlike/{id}/{userId}',[LikeController::class,'unLike']);
+    Route::get('search/data/{id}/{searchKey}',[PostController::class,'search']);
+    Route::get('genre/search/data/{id}/{searchKey}',[PostController::class,'genreSearch']);
 });
 
 });

@@ -1,9 +1,25 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\web\PostController;
+use App\Http\Controllers\web\UserwController;
 
-Route::get('/', function () {
-    return view('dashboard');
+
+Route::get('/register/page', [UserwController::class, 'registerPage'])->middleware('guest')->name('register#accountPage');
+Route::get('/login/page', [UserwController::class, 'loginPage'])->middleware('guest')->name('login#accountPage');
+Route::post('/register/page', [UserwController::class, 'registerAcc'])->middleware('guest')->name('register#account');
+Route::post('/login/page', [UserwController::class, 'loginAcc'])->middleware('guest')->name('login#account');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', [PostController::class, 'getData'])->name('get#data');
+    Route::get('/delete/post/{id}', [PostController::class, 'deletePost'])->name('delete#post');
+    Route::get('/delete/user/{id}', [PostController::class, 'deleteUser'])->name('delete#user');
+    Route::get('/manage/user/acc', [PostController::class, 'manageAcc'])->name('manage#acc');
+    Route::post('/update/admin/acc', [UserwController::class, 'updateAdminAcc'])->name('update#adminInfo');
+    Route::get('/change/password', [UserwController::class, 'changePassword'])->name('change#password');
+    Route::post('/form/change/password', [UserwController::class, 'changePasswordForm'])->name('change#passwordForm');
+    Route::get('/admin/acc/{id}', [UserwController::class, 'adminAcc'])->name('admin#acc');
+    Route::post('/logout', [UserwController::class, 'logOut'])->name('logout#log');
 });
 
 // Route::get('/','DashboardController@index');
@@ -121,12 +137,13 @@ Route::group(['prefix' => 'ecommerce'], function(){
 });
 
 // For Clear cache
-Route::get('/clear-cache', function() {
-    Artisan::call('cache:clear');
-    return "Cache is cleared";
-});
+// Route::get('/clear-cache', function() {
+//     Artisan::call('cache:clear');
+//     return "Cache is cleared";
+// });
 
-// 404 for undefined routes
-Route::any('/{page?}',function(){
-    return View::make('pages.error-pages.error-404');
-})->where('page','.*');
+// // 404 for undefined routes
+// Route::any('/{page?}',function(){
+//     return View::make('pages.error-pages.error-404');
+// })->where('page','.*');
+

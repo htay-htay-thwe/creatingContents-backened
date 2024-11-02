@@ -5,14 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\Like;
 use App\Models\Post;
 use App\Models\Save;
+use App\Models\User;
 use App\Models\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Storage;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
 class PostController extends Controller
 {
@@ -46,13 +48,63 @@ class PostController extends Controller
 
     }
 
+    public function search($userId, $searchKey, Request $request)
+    {
+        if ($this->checkToken($request)) {
+            $data = $this->getCommonData($userId);
+
+                $searchResults = $data->filter(function ($item) use ($searchKey) {
+                    return (
+                        stripos($item['writerProfile'] ?? '', $searchKey) !== false ||
+                        stripos($item['genre'] ?? '', $searchKey) !== false ||
+                        stripos($item['title'] ?? '', $searchKey) !== false ||
+                        stripos($item['content'] ?? '', $searchKey) !== false
+                    );
+                });
+                $searchResults = $searchResults->values();
+                return response()->json([
+                    'success' => true,
+                    'search' => $searchResults
+                ]);
+
+        }  else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized'
+            ], 401);
+        }
+    }
+
+    public function genreSearch($userId, $genre, Request $request)
+    {
+        if ($this->checkToken($request)) {
+            $data = $this->getCommonData($userId);
+                $searchResults = $data->filter(function ($item) use ($genre) {
+                    return (
+                        stripos($item['genre'] ?? '', $genre) !== false
+                    );
+                });
+                $searchResults = $searchResults->values();
+                return response()->json([
+                    'success' => true,
+                    'search' => $searchResults
+                ]);
+
+        }  else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized'
+            ], 401);
+        }
+    }
+
     public function getProfilePost($userId, Request $request)
     {
         if ($this->checkToken($request)) {
             $data = $this->getCommonData($userId);
             $postAuth = $data->where('userId', $userId)->values();
             $deleted = $this->getArchiveData($userId);
-            $deletedPosts = $deleted->where('AuthId',$userId)->values();
+            $deletedPosts = $deleted->where('userId',$userId)->values();
             $view = View::count();
             $save = $data->where('save', 0)->whereNotNull('save')->where('AuthId', $userId)->values();
 
@@ -174,6 +226,9 @@ class PostController extends Controller
 
     }
 
+
+
+
     private function getCommonData($userId)
     {
         $data = Post::leftJoin('images', 'posts.id', '=', 'images.post_id')
@@ -266,6 +321,7 @@ class PostController extends Controller
                     })->unique('image')->filter()->values()->toArray(), // Get an array of image paths
                 ];
             })->values();
+            logger($data);
         return $data;
     }
 

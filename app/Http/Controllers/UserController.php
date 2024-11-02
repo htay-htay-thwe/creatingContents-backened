@@ -44,6 +44,7 @@ class UserController extends Controller
         if (!$token = JWTAuth::attempt($credentials)) {
             return response()->json(['error' => 'Incorrect password'], 401);
         }
+        logger($request->all());
         return response()->json([
             'success' => true,
             'token' => $token,
@@ -74,7 +75,9 @@ class UserController extends Controller
     {
         logger($request->all());
         if ($this->checkToken($request)) {
-            if (User::where('email', $request->email)->exists()) {
+            if (User::where('email', $request->email)
+                ->where('id', '!=', $request->userId) // Exclude the current user
+                ->exists()) {
                 return response()->json(['error' => 'Account with this email already exists!'], 409); // 409 Conflict
             } else {
                 User::where('id', $request->userId)->update([
@@ -110,7 +113,7 @@ class UserController extends Controller
                 return response()->json([
                     'success' => false,
                     'error' => 'Old password is incorrect.',
-                ],400);
+                ], 400);
             }
         }
     }
