@@ -2,12 +2,13 @@
 
 
 ## Login Page
-![127 0 0 1_8000_register_page](https://github.com/user-attachments/assets/92641911-836d-4d5e-b07b-3bf46b522302)
+![127 0 0 1_8000_login_page](https://github.com/user-attachments/assets/9a5d9253-34f8-42ba-b43a-e9abd5a950e2)
+
 
 
 
 ## Register Page 
-![127 0 0 1_8000_dashboard](https://github.com/user-attachments/assets/4131484b-c311-4927-aeb6-93e4ab2ada3f)
+![127 0 0 1_8000_register_page](https://github.com/user-attachments/assets/92641911-836d-4d5e-b07b-3bf46b522302)
 
 
 ## Admin Dashboard
