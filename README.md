@@ -11,7 +11,8 @@
 
 
 ## Admin Dashboard
-![127 0 0 1_8000_dashboard](https://github.com/user-attachments/assets/0b83aaf4-c958-4343-a418-43570e245cb3)
+![127 0 0 1_8000_dashboard](https://github.com/user-attachments/assets/065fe4a1-5d2b-4c15-9003-24f119b00e13)
+
 
 
 
