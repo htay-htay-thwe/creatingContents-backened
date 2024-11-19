@@ -26,6 +26,7 @@ Route::group(['prefix' => 'basic-ui'], function () {
     Route::get('show/comments/{id}',[CommentController::class,'showComments']);
     Route::get('create/comment/{id}/{parentId}/{comment}/{userId}',[CommentController::class,'createComments']);
     Route::post('reply/comment/{id}/{userId}',[CommentController::class,'reply']);
+    Route::get('delete/comment/{id}/{postId}',[CommentController::class,'deleteComment']);
     Route::get('create/save/{id}/{userId}',[SaveController::class,'Save']);
     Route::get('unSave/{id}',[SaveController::class,'unSave']);
     Route::get('add/like/{id}/{userId}',[LikeController::class,'addLike']);

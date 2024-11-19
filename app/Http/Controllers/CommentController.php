@@ -16,6 +16,7 @@ class CommentController extends Controller
     {
         if($this->checkToken($request)){
       $comment = $this->getAllComments($postId);
+      logger($comment);
         return response()->json([
             'success' => true,
             'comment' => $comment,
@@ -35,7 +36,6 @@ class CommentController extends Controller
         ]);
 
         $comment = $this->getAllComments((string) $postId);
-        logger($comment);
         return response()->json([
             'success' => true,
             'comment' => $comment,
@@ -45,9 +45,6 @@ class CommentController extends Controller
 
     public function reply($postId,$userId,Request $request){
         if($this->checkToken($request)){
-            logger($postId);
-            logger($userId);
-            logger($request->all());
             Comment::create([
                 'userId' => $userId,
                 'post_id' => $postId,
@@ -62,12 +59,24 @@ class CommentController extends Controller
         }
     }
 
+    public function deleteComment($id,$postId,Request $request){
+        logger($postId);
+        if($this->checkToken($request)){
+         Comment::where('id',$id)->delete();
+         $comment = $this->getAllComments($postId);
+         return response()->json([
+             'success' => true,
+             'comment' => $comment,
+         ]);
+        }
+    }
+
     private function getAllComments($postId)
     {
         $comment = Post::with([
             'user:id,name,image',
             'comments' => function ($query) use ($postId)  {
-                $query->where('post_id', $postId)->where('parent_id','1'); // Ensure comments are for post ID 9
+                $query->where('post_id', $postId)->where('parent_id',1); // Ensure comments are for post ID 9
             },
             'comments.user:id,name,image', // Load user for comments
             'comments.replies' => function ($query) use ($postId)  {

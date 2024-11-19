@@ -44,7 +44,6 @@ class UserController extends Controller
         if (!$token = JWTAuth::attempt($credentials)) {
             return response()->json(['error' => 'Incorrect password'], 401);
         }
-        logger($request->all());
         return response()->json([
             'success' => true,
             'token' => $token,
@@ -56,13 +55,11 @@ class UserController extends Controller
     {
         if ($this->checkToken($request)) {
             $image = $request->file('image');
-            logger($image);
             $fileName = uniqid() . '_' . $image->getClientOriginalName();
             $image->storeAs('public/images', $fileName);
             User::where('id', $request->userId)->update([
                 'image' => $fileName,
             ]);
-            logger('filename' . $fileName);
             $user = User::where('id', $request->userId)->first();
             return response()->json([
                 'success' => true,
@@ -73,7 +70,6 @@ class UserController extends Controller
 
     public function updateInfo(Request $request)
     {
-        logger($request->all());
         if ($this->checkToken($request)) {
             if (User::where('email', $request->email)
                 ->where('id', '!=', $request->userId) // Exclude the current user
@@ -97,10 +93,8 @@ class UserController extends Controller
     public function changePw(Request $request)
     {
         if ($this->checkToken($request)) {
-            logger($request->all());
             $data = User::where('id', $request->userId)->first();
             if (Hash::check($request->oldPassword, $data->password)) {
-                logger('same');
                 User::where('id', $request->userId)->update([
                     'password' => Hash::make($request->password),
                 ]);

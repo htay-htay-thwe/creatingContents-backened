@@ -15,8 +15,6 @@ class LikeController extends Controller
     {
         if ($this->checkToken($request)) {
         $like = Like::where('post_id', $postId)->where('userId', $userId)->first();
-        logger($postId);
-        logger($like);
         if ($like === null) {
             Like::create([
                 'post_id' => $postId,

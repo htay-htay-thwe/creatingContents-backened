@@ -5,16 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Like;
 use App\Models\Post;
 use App\Models\Save;
-use App\Models\User;
 use App\Models\View;
 use Illuminate\Http\Request;
-use Illuminate\Http\UploadedFile;
-use Tymon\JWTAuth\Facades\JWTAuth;
-use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Storage;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class PostController extends Controller
 {
@@ -53,24 +50,24 @@ class PostController extends Controller
         if ($this->checkToken($request)) {
             $data = $this->getCommonData($userId);
 
-                $searchResults = $data->filter(function ($item) use ($searchKey) {
-                    return (
-                        stripos($item['writerProfile'] ?? '', $searchKey) !== false ||
-                        stripos($item['genre'] ?? '', $searchKey) !== false ||
-                        stripos($item['title'] ?? '', $searchKey) !== false ||
-                        stripos($item['content'] ?? '', $searchKey) !== false
-                    );
-                });
-                $searchResults = $searchResults->values();
-                return response()->json([
-                    'success' => true,
-                    'search' => $searchResults
-                ]);
+            $searchResults = $data->filter(function ($item) use ($searchKey) {
+                return (
+                    stripos($item['writerProfile'] ?? '', $searchKey) !== false ||
+                    stripos($item['genre'] ?? '', $searchKey) !== false ||
+                    stripos($item['title'] ?? '', $searchKey) !== false ||
+                    stripos($item['content'] ?? '', $searchKey) !== false
+                );
+            });
+            $searchResults = $searchResults->values();
+            return response()->json([
+                'success' => true,
+                'search' => $searchResults,
+            ]);
 
-        }  else {
+        } else {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized'
+                'message' => 'Unauthorized',
             ], 401);
         }
     }
@@ -79,21 +76,21 @@ class PostController extends Controller
     {
         if ($this->checkToken($request)) {
             $data = $this->getCommonData($userId);
-                $searchResults = $data->filter(function ($item) use ($genre) {
-                    return (
-                        stripos($item['genre'] ?? '', $genre) !== false
-                    );
-                });
-                $searchResults = $searchResults->values();
-                return response()->json([
-                    'success' => true,
-                    'search' => $searchResults
-                ]);
+            $searchResults = $data->filter(function ($item) use ($genre) {
+                return (
+                    stripos($item['genre'] ?? '', $genre) !== false
+                );
+            });
+            $searchResults = $searchResults->values();
+            return response()->json([
+                'success' => true,
+                'search' => $searchResults,
+            ]);
 
-        }  else {
+        } else {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized'
+                'message' => 'Unauthorized',
             ], 401);
         }
     }
@@ -104,7 +101,7 @@ class PostController extends Controller
             $data = $this->getCommonData($userId);
             $postAuth = $data->where('userId', $userId)->values();
             $deleted = $this->getArchiveData($userId);
-            $deletedPosts = $deleted->where('userId',$userId)->values();
+            $deletedPosts = $deleted->where('userId', $userId)->values();
             $view = View::count();
             $save = $data->where('save', 0)->whereNotNull('save')->where('AuthId', $userId)->values();
 
@@ -120,98 +117,108 @@ class PostController extends Controller
 
     }
 
-    public function editPost($postId,$userId ,Request $request)
+    public function editPost($postId, $userId, Request $request)
     {
 
         if ($this->checkToken($request)) {
 
-        $data = $this->getCommonData($userId);
-        $post = $data->where('id', $postId)->first();
-        return response()->json([
-            'success' => true,
-            'post' => $post,
+            $data = $this->getCommonData($userId);
+            $post = $data->where('id', $postId)->first();
+            return response()->json([
+                'success' => true,
+                'post' => $post,
 
-        ]);
-    }
+            ]);
+        }
 
     }
 
     public function updatePost(Request $request)
     {
         if ($this->checkToken($request)) {
-        $post = Post::findOrFail($request->postId);
-        $post->update([
-            'userId' => $request->userId,
-            'genre' => $request->genre,
-            'title' => $request->title,
-            'content' => $request->content,
-        ]);
-        if (isset($request->images) || ($request->imageUrls)) {
-            foreach ($post->images as $oldImage) {
-                $oldImagePath = 'public/images/' . $oldImage->path;
-                if (Storage::exists($oldImagePath)) {
-                    Storage::delete($oldImagePath);
-                }
-                $oldImage->delete();
-            }
+            $post = Post::findOrFail($request->postId);
+            $post->update([
+                'userId' => $request->userId,
+                'genre' => $request->genre,
+                'title' => $request->title,
+                'content' => $request->content,
+            ]);
+            if ($request->hasFile('images') || $request->has('imageUrls')) {
+                $newImagePaths = [];
 
-            if ($request->imageUrls !== null) {
-                foreach ($request->imageUrls as $image) {
-                    if (is_string($image)) {
-                        $fileName = str_replace('http://localhost:8000/storage/images/', '', $image);
-                        $post->images()->create(['path' => $fileName]);
+                // Handle image URLs if provided (optional)
+                if ($request->has('imageUrls')) {
+                    foreach ($request->imageUrls as $imageUrl) {
+                        $fileName = str_replace('http://localhost:8000/storage/images/', '', $imageUrl);
+                        $newImagePaths[] = $fileName;
                     }
                 }
-            }
 
-            if ($request->images !== null) {
-                foreach ($request->images as $image) {
-                    if ($image instanceof UploadedFile) {
-                        // Handle File object case
+                // Handle newly uploaded files if provided
+                if ($request->hasFile('images')) {
+                    foreach ($request->file('images') as $image) {
                         $fileName = uniqid() . '_' . $image->getClientOriginalName();
                         $image->storeAs('public/images', $fileName);
+                        $newImagePaths[] = $fileName;
+                    }
+                }
+
+                foreach ($post->images as $oldImage) {
+                    if (!in_array($oldImage->path, $newImagePaths)) {
+                        $oldImagePath = 'public/images/' . $oldImage->path;
+                        if (Storage::exists($oldImagePath)) {
+                            Storage::delete($oldImagePath); // Delete image file
+                        }
+                        $oldImage->delete();
+                    }
+                }
+
+                foreach ($newImagePaths as $fileName) {
+                    if (!$post->images()->where('path', $fileName)->exists()) {
                         $post->images()->create(['path' => $fileName]);
                     }
                 }
             }
-        };
-        $userId = $request->userId;
-        $data = $this->getCommonData($userId);
-        $postAuth = $data->where('userId', $request->userId)->values();
-        return response()->json([
-            'success' => true,
-            'post' => $data,
-            'postAuth' => $postAuth,
-        ]);
-    }
-    }
 
-    public function deletePost($postId,Request $request)
-    {
-        if ($this->checkToken($request)) {
-        Post::where('id', $postId)->delete();
+            $post->update($request->except(['images', 'imageUrls']));
+
+            $userId = $request->userId;
+            $data = $this->getCommonData($userId);
+            $postAuth = $data->where('userId', $request->userId)->values();
+            return response()->json([
+                'success' => true,
+                'post' => $data,
+                'postAuth' => $postAuth,
+            ]);
         }
     }
 
-    public function restorePost($postId,Request $request)
+    public function deletePost($postId, Request $request)
     {
         if ($this->checkToken($request)) {
-        $post = Post::withTrashed()->find($postId);
-        $post->restore();
+            Post::where('id', $postId)->delete();
         }
-
     }
 
-    public function deletePermanentPost($postId,Request $request)
+    public function restorePost($postId, Request $request)
     {
         if ($this->checkToken($request)) {
-        $post = Post::withTrashed()->find($postId);
-        $post->forceDelete();
+            $post = Post::withTrashed()->find($postId);
+            $post->restore();
         }
 
     }
 
-    public function getReadPost($postId,$userId, Request $request)
+    public function deletePermanentPost($postId, Request $request)
+    {
+        if ($this->checkToken($request)) {
+            $post = Post::withTrashed()->find($postId);
+            $post->forceDelete();
+        }
+
+    }
+
+    public function getReadPost($postId, $userId, Request $request)
     {
         if ($this->checkToken($request)) {
             $data = $this->getCommonData($userId);
@@ -220,14 +227,11 @@ class PostController extends Controller
                 'success' => true,
                 'readPost' => $post,
             ]);
-        }else{
+        } else {
             logger('error');
         }
 
     }
-
-
-
 
     private function getCommonData($userId)
     {
@@ -253,14 +257,16 @@ class PostController extends Controller
             'images.path',
             'saves.save',
             'saves.userId as AuthId',
-            'likes.like')
+            'likes.like',
+            'posts.created_at',
+            'posts.deleted_at')
             ->get()->groupBy('id')
             ->map(function ($group) {
                 $postId = $group[0]->id;
                 $viewsCount = View::where('postId', $postId)->count();
                 $likeCount = Like::where('post_id', $postId)->where('like', 0)->count();
                 $unLikeCount = Like::where('post_id', $postId)->where('like', 1)->count();
-                    $like = $likeCount - $unLikeCount;
+                $like = $likeCount - $unLikeCount;
 
                 return [
                     'id' => $group[0]->id,
@@ -276,6 +282,7 @@ class PostController extends Controller
                     'save' => $group[0]->save,
                     'likeCount' => $like,
                     'like' => $group[0]->like,
+                    'created_at' => $group[0]->created_at,
                     'images' => $group->map(function ($item) {
                         return [
                             'id' => $item->id,
@@ -286,21 +293,26 @@ class PostController extends Controller
             })->values();
         return $data;
 
-
     }
 
     private function getArchiveData($userId)
     {
         $data = Post::leftJoin('images', 'posts.id', '=', 'images.post_id')
             ->leftJoin('views', 'posts.id', '=', 'views.postId')
+            ->leftJoin('users', 'posts.userId', '=', 'users.id')
             ->select('posts.*',
+                'users.name',
+                'users.image as writerProfile',
+                'users.email',
                 'posts.id',
                 'posts.userId',
                 'posts.genre',
                 'posts.title',
                 'posts.content',
                 'images.path',
-                'views.id as view_id') // Specify the columns you want to retrieve
+                'views.id as view_id',
+                'posts.created_at',
+                'posts.deleted_at')
             ->onlyTrashed()->get()->groupBy('id')
             ->map(function ($group) use ($userId) {
                 $postId = $group[0]->id;
@@ -308,11 +320,16 @@ class PostController extends Controller
                 return [
                     'id' => $group[0]->id,
                     'userId' => $group[0]->userId,
+                    'userName' => $group[0]->name,
+                    'writerProfile' => $group[0]->writerProfile,
+                    'email' => $group[0]->email,
                     'genre' => $group[0]->genre,
                     'title' => $group[0]->title,
                     'content' => $group[0]->content,
                     'views' => $viewsCount,
                     'AuthId' => $userId,
+                    'created_at' => $group[0]->created_at,
+                    'deleted_at' => $group[0]->deleted_at,
                     'images' => $group->map(function ($item) {
                         return [
                             'id' => $item->id, // Image or product ID
@@ -321,7 +338,6 @@ class PostController extends Controller
                     })->unique('image')->filter()->values()->toArray(), // Get an array of image paths
                 ];
             })->values();
-            logger($data);
         return $data;
     }
 

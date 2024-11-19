@@ -15,8 +15,6 @@ class ViewController extends Controller
     {
 
         if ($this->checkToken($request)) {
-            logger($postIds);
-            logger($userId);
             View::create([
                 'postId' => $postIds,
                 'userId' => $userId,
