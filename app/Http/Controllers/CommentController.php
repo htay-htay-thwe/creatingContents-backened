@@ -16,7 +16,6 @@ class CommentController extends Controller
     {
         if($this->checkToken($request)){
       $comment = $this->getAllComments($postId);
-      logger($comment);
         return response()->json([
             'success' => true,
             'comment' => $comment,
@@ -60,7 +59,6 @@ class CommentController extends Controller
     }
 
     public function deleteComment($id,$postId,Request $request){
-        logger($postId);
         if($this->checkToken($request)){
          Comment::where('id',$id)->delete();
          $comment = $this->getAllComments($postId);

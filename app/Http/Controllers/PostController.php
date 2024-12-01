@@ -30,8 +30,6 @@ class PostController extends Controller
                 $image->storeAs('public/images', $fileName);
                 $post->images()->create(['path' => $fileName]);
             }
-        } else {
-            logger('No images were uploaded.');
         }
         $userId = 1;
         $data = $this->getCommonData($userId);
@@ -227,8 +225,6 @@ class PostController extends Controller
                 'success' => true,
                 'readPost' => $post,
             ]);
-        } else {
-            logger('error');
         }
 
     }

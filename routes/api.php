@@ -1,14 +1,15 @@
 <?php
 
-use App\Http\Controllers\CommentController;
-use App\Http\Controllers\DeleteController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\SaveController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ViewController;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DeleteController;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\SocialLoginController;
 
 Route::group(['middleware' => ['check.jwt']], function () {
 
@@ -44,3 +45,6 @@ Route::group(['prefix' => 'userAuth'], function () {
     Route::post('update/user/information',[UserController::class,'updateInfo']);
     Route::post('change/password',[UserController::class,'changePw']);
 });
+
+Route::get('/auth/{provider}/redirect',[SocialLoginController::class,'redirectApi']);
+Route::get('/auth/{provider}/callback', [SocialLoginController::class,'callbackApi']);

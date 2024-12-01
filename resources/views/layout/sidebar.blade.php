@@ -4,7 +4,7 @@
             <div class="nav-link">
                 <div class="user-wrapper">
                     <div class="profile-image" style="height: 50px; width: 50px; border-radius: 50%; overflow: hidden;">
-                        <img src="{{ Auth::user()->image ? asset('storage/images/' . Auth::user()->image) : asset('storage/images/default.jpg') }}"
+                        <img src="{{ filter_var(Auth::user()->image, FILTER_VALIDATE_URL) ? Auth::user()->image : (Auth::user()->image && file_exists(public_path('storage/images/' . Auth::user()->image)) ? asset('storage/images/' . Auth::user()->image) : asset('storage/images/default.jpg')) }}"
                             style="width: 100%; height: 100%; object-fit: cover;" alt="profile image" />
                     </div>
 

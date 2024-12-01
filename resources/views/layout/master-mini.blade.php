@@ -13,6 +13,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 
   <link rel="shortcut icon" href="{{ asset('/favicon.ico') }}">
+  <script src="https://kit.fontawesome.com/930e3b0b55.js" crossorigin="anonymous"></script>
 
   <!-- plugin css -->
   {!! Html::style('assets/plugins/@mdi/font/css/materialdesignicons.min.css') !!}

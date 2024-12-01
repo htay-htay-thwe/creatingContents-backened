@@ -21,9 +21,9 @@ class UserController extends Controller
                 'name' => $request->userName,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
+                'role' => 'user'
             ]);
             $user = User::where('email', $request->email)->first();
-
             $token = JWTAuth::fromUser($data);
         }
         return response()->json([
@@ -44,11 +44,15 @@ class UserController extends Controller
         if (!$token = JWTAuth::attempt($credentials)) {
             return response()->json(['error' => 'Incorrect password'], 401);
         }
-        return response()->json([
-            'success' => true,
-            'token' => $token,
-            'user' => $user,
-        ]);
+        if($user->role == "user"){
+            return response()->json([
+                'success' => true,
+                'token' => $token,
+                'user' => $user,
+            ]);
+        }else{
+            return response()->json(['error' => 'something wrong!'], 400);
+        }
     }
 
     public function uploadProfile(Request $request)

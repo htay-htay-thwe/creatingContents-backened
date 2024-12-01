@@ -44,7 +44,8 @@
                         <div class="my-3 text-center text-block">
                             <span class="text-small font-weight-semibold">Not a member ?</span>
                             <a href="{{ route('register#accountPage') }}" class="text-black text-small">Create new
-                                account</a>
+                                account /</a>
+                            <a href="{{ route('register#accountPage') }}" class="text-black text-small " style="text-decoration: underline;">Login with Google</a>
                         </div>
                     </form>
                 </div>

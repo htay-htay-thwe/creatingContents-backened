@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\SocialLoginController;
 use Illuminate\Support\Facades\Route;
+use Laravel\Socialite\Facades\Socialite;
 use App\Http\Controllers\web\PostController;
 use App\Http\Controllers\web\UserwController;
 
@@ -9,6 +11,9 @@ Route::get('/register/page', [UserwController::class, 'registerPage'])->middlewa
 Route::get('/login/page', [UserwController::class, 'loginPage'])->middleware('guest')->name('login#accountPage');
 Route::post('/register/page', [UserwController::class, 'registerAcc'])->middleware('guest')->name('register#account');
 Route::post('/login/page', [UserwController::class, 'loginAcc'])->middleware('guest')->name('login#account');
+
+Route::get('/auth/{provider}/redirect',[SocialLoginController::class,'redirect']);
+Route::get('/auth/{provider}/callback', [SocialLoginController::class,'callback']);
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [PostController::class, 'getData'])->name('get#data');
@@ -22,7 +27,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [UserwController::class, 'logOut'])->name('logout#log');
 });
 
-// Route::get('/','DashboardController@index');
 
 Route::group(['prefix' => 'basic-ui'], function(){
     Route::get('accordions', function () { return view('pages.basic-ui.accordions'); });
@@ -135,15 +139,3 @@ Route::group(['prefix' => 'ecommerce'], function(){
     Route::get('project-list', function () { return view('pages.ecommerce.project-list'); });
     Route::get('orders', function () { return view('pages.ecommerce.orders'); });
 });
-
-// For Clear cache
-// Route::get('/clear-cache', function() {
-//     Artisan::call('cache:clear');
-//     return "Cache is cleared";
-// });
-
-// // 404 for undefined routes
-// Route::any('/{page?}',function(){
-//     return View::make('pages.error-pages.error-404');
-// })->where('page','.*');
-

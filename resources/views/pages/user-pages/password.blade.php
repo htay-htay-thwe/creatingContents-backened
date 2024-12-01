@@ -72,42 +72,47 @@
         </div>
     </div>
     @if (session('success'))
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <strong>{{ session('success') }}</strong>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-@endif
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>{{ session('success') }}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
     @if (session('conFail'))
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <strong>{{ session('conFail') }}</strong>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-@endif
-    <h3 class="m-3 text-center"><span><svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="#5f6368"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480h80q0 66 25 124.5t68.5 102q43.5 43.5 102 69T480-159q134 0 227-93t93-227q0-134-93-227t-227-93q-89 0-161.5 43.5T204-640h116v80H80v-240h80v80q55-73 138-116.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-80-240q-17 0-28.5-11.5T360-360v-120q0-17 11.5-28.5T400-520v-40q0-33 23.5-56.5T480-640q33 0 56.5 23.5T560-560v40q17 0 28.5 11.5T600-480v120q0 17-11.5 28.5T560-320H400Zm40-200h80v-40q0-17-11.5-28.5T480-600q-17 0-28.5 11.5T440-560v40Z"/></svg></span>Change Password</h3>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>{{ session('conFail') }}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+    <h3 class="m-3 text-center"><span><svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960"
+                width="30px" fill="#5f6368">
+                <path
+                    d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480h80q0 66 25 124.5t68.5 102q43.5 43.5 102 69T480-159q134 0 227-93t93-227q0-134-93-227t-227-93q-89 0-161.5 43.5T204-640h116v80H80v-240h80v80q55-73 138-116.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-80-240q-17 0-28.5-11.5T360-360v-120q0-17 11.5-28.5T400-520v-40q0-33 23.5-56.5T480-640q33 0 56.5 23.5T560-560v40q17 0 28.5 11.5T600-480v120q0 17-11.5 28.5T560-320H400Zm40-200h80v-40q0-17-11.5-28.5T480-600q-17 0-28.5 11.5T440-560v40Z" />
+            </svg></span>Change Password</h3>
     <div class="p-5 mx-auto shadow-sm row w-50 rounded-xl">
         <form method="POST" action="{{ route('change#passwordForm') }}">
             @csrf
-            <input type='hidden' name="userId" value="{{ old('userId', Auth::id()) }}"/>
+            <input type='hidden' name="userId" value="{{ old('userId', Auth::id()) }}" />
             <div class="mb-3">
                 <label for="exampleInputEmail1" class="form-label" style="color:#00DC82">Old Password</label>
-                <input placeholder="Enter Old Password" type="password" name="oldPassword" class="form-control @error('oldPassword') is-invalid @enderror"
-                    id="exampleInputEmail1" aria-describedby="emailHelp">
+                <input placeholder="Enter Old Password" type="password" name="oldPassword"
+                    class="form-control @error('oldPassword') is-invalid @enderror" id="exampleInputEmail1"
+                    aria-describedby="emailHelp">
                 @error('oldPassword')
                     <div class="text-small text-danger">{{ $message }}</div>
                 @enderror
             </div>
             <div class="mb-3">
                 <label for="exampleInputPassword1" class="form-label" style="color:#00DC82">New Password</label>
-                <input placeholder="Enter New Password" type="password" name="newPassword" class="form-control @error('newPassword') is-invalid @enderror"
-                    id="exampleInputPassword1">
+                <input placeholder="Enter New Password" type="password" name="newPassword"
+                    class="form-control @error('newPassword') is-invalid @enderror" id="exampleInputPassword1">
                 @error('oldPassword')
                     <div class="text-small text-danger">{{ $message }}</div>
                 @enderror
             </div>
             <div class="mb-3">
                 <label for="exampleInputPassword1" class="form-label" style="color:black">Comfirmed Password</label>
-                <input placeholder="Enter Confirmed Password" type="password" name="confirmedPassword" class="form-control @error('confirmedPassword') is-invalid @enderror"
-                    id="exampleInputPassword1">
+                <input placeholder="Enter Confirmed Password" type="password" name="confirmedPassword"
+                    class="form-control @error('confirmedPassword') is-invalid @enderror" id="exampleInputPassword1">
                 @error('confirmedPassword')
                     <div class="text-small text-danger">{{ $message }}</div>
                 @enderror

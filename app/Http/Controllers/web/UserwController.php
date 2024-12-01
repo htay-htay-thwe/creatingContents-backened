@@ -126,6 +126,7 @@ class UserwController extends Controller
             'name' => $request->userName,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => 'admin'
         ]);
 
         Auth::login(User::where('email', $request->email)->first());
@@ -150,9 +151,11 @@ class UserwController extends Controller
         if (!$user) {
             return redirect('/login/page')->with('error', 'User does not exist!');
         }else if(!Hash::check($request->password, $user->password)){
-            return redirect('/login/page')->with('error', 'Password is incorrect!');
+                return redirect('/login/page')->with('error', 'Password is incorrect!');
         }
+        if($user->role == "admin"){
         Auth::login($user);
+        }
         return redirect()->route('get#data')->with('success', 'Login Successfully!');
 
     }
