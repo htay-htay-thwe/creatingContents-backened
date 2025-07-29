@@ -8,11 +8,11 @@
                 <h2 class="mb-4 text-center">Register</h2>
                 <div class="auto-form-wrapper">
                     @if (session('error'))
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <strong>{{ session('error') }}</strong>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>{{ session('error') }}</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
                     <form action="{{ route('register#account') }}" method="post">
                         @csrf
                         <div class="form-group">
@@ -54,7 +54,7 @@
                         </div>
                     </form>
 
-                    <div class="mb-2 d-flex justify-content-center align-items-center" >
+                    {{-- <div class="mb-2 d-flex justify-content-center align-items-center" >
                         <div class="justify-content-between d-flex" style="width: 180px; align-items: center;">
                             <a href="{{ url('/auth/github/redirect') }}" class="p-2 border text-decoration-none" style="border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; background-color: #0C83E2; color: white;">
                               <i class="fa-brands fa-github" style="font-size: 20px;"></i>
@@ -66,7 +66,7 @@
                                 <i class="fa-brands fa-google" style="font-size: 20px;"></i>
                             </a>
                         </div>
-                    </div>
+                    </div> --}}
 
 
                 </div>

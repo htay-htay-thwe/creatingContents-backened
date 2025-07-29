@@ -20,9 +20,7 @@
 
   @stack('plugin-styles')
 
-  <!-- common css -->
-  {!! Html::style('css/app.css') !!}
-  <!-- end common css -->
+x
 
   @stack('style')
 </head>

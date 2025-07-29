@@ -118,7 +118,7 @@
                 @enderror
             </div>
 
-            <button type="submit" class="p-2 text-black btn btn-success font-weight-bold">Update</button>
+            <button type="submit" class="p-2 text-black rounded border-success" style="background: #00DC82">Update</button>
         </form>
     </div>
 @endsection
