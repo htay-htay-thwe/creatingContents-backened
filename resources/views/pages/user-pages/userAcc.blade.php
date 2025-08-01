@@ -114,17 +114,19 @@
                                             <img src="{{ asset('storage/images/' . $u['image']) }}" class=""
                                                 width="1000" height="1000" alt="User Image" />
                                         @else
-                                            <img src="{{ asset('storage/images/default.jpg') }}" class=""
-                                                width="1000" height="1000" alt="Default Image" />
+                                            <img src="{{ asset('images/default.png') }}" class="" width="1000"
+                                                height="1000" alt="Default Image" />
                                         @endif
                                     <td class="text-danger">
                                         @if ($u['id'] !== Auth::id())
-                                        <a href="{{ route('delete#user', $u['id']) }}">
-                                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FF0033">
-                                                <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
-                                            </svg>
-                                        </a>
-                                    @endif
+                                            <a href="{{ route('delete#user', $u['id']) }}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" height="24px"
+                                                    viewBox="0 -960 960 960" width="24px" fill="#FF0033">
+                                                    <path
+                                                        d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
+                                                </svg>
+                                            </a>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach
