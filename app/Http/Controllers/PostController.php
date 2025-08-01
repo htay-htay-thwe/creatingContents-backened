@@ -3,7 +3,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Like;
 use App\Models\Post;
-use App\Models\Save;
 use App\Models\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -111,6 +110,8 @@ class PostController extends Controller
                 'view'         => $view,
                 'save'         => $save,
             ]);
+        } else {
+            logger('token invalid');
         }
 
     }

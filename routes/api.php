@@ -9,11 +9,13 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ViewController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('basic-ui/get/profile/post/{id}', [PostController::class, 'getProfilePost']);
+
 Route::group(['middleware' => ['check.jwt']], function () {
 
     Route::group(['prefix' => 'basic-ui'], function () {
         Route::post('create/post', [PostController::class, 'postCreate']);
-        Route::get('get/profile/post/{id}', [PostController::class, 'getProfilePost']);
+
         Route::get('edit/post/{id}/{userId}', [PostController::class, 'editPost']);
         Route::post('update/post', [PostController::class, 'updatePost']);
         Route::get('get/read/content/{id}/{userId}', [PostController::class, 'getReadPost']);
