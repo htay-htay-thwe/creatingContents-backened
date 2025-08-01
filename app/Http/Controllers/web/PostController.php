@@ -3,7 +3,7 @@ namespace App\Http\Controllers\web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Like;
-use App\Models\post;
+use App\Models\Post;
 use App\Models\User;
 use App\Models\View;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -14,7 +14,7 @@ class PostController extends Controller
 
     public function getData()
     {
-        $posts = post::count();
+        $posts = Post::count();
         $users = User::count();
         logger($users);
         $data           = $this->getCommonData();
@@ -45,7 +45,7 @@ class PostController extends Controller
 
     public function manageAcc()
     {
-        $posts   = post::count();
+        $posts   = Post::count();
         $users   = User::count();
         $data    = $this->getCommonData();
         $popular = $data->filter(function ($post) {

@@ -5,7 +5,7 @@ use App\Models\Post;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Images extends Model
+class Image extends Model
 {
     use HasFactory;
     protected $fillable = ['path', 'post_id'];

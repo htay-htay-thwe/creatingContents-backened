@@ -1,7 +1,9 @@
 <?php
 namespace App\Models;
 
-use App\Models\images;
+use App\Models\Image;
+use App\Models\Save;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -17,7 +19,7 @@ class Post extends Model
     ];
     public function images()
     {
-        return $this->hasMany(images::class);
+        return $this->hasMany(Image::class);
     }
 
     public function saves()
