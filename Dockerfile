@@ -31,6 +31,8 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
 
+RUN php artisan storage:link
+
 EXPOSE 8000
 
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
