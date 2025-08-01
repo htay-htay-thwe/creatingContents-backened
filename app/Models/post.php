@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Post extends Model
 {
+    #good
     use SoftDeletes;
     protected $fillable = [
         'userId',
