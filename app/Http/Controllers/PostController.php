@@ -22,17 +22,20 @@ class PostController extends Controller
             'content' => $request->content,
 
         ]);
+        logger('work');
         if ($request->hasFile('images')) {
+            logger($request->hasFile('images'));
             foreach ($request->file('images') as $image) {
                 $fileName = uniqid() . '_' . $image->getClientOriginalName();
                 $image->storeAs('public/images', $fileName);
                 $post->images()->create(['path' => $fileName]);
             }
+            logger('img');
         }
         $userId   = 1;
         $data     = $this->getCommonData($userId);
         $postAuth = $data->where('userId', $request->userId)->values();
-
+        logger($postAuth);
         return response()->json([
             'success'  => true,
             'post'     => $data,
@@ -148,7 +151,7 @@ class PostController extends Controller
                 // Handle image URLs if provided (optional)
                 if ($request->has('imageUrls')) {
                     foreach ($request->imageUrls as $imageUrl) {
-                        $fileName        = str_replace('http://localhost:8000/storage/images/', '', $imageUrl);
+                        $fileName        = str_replace('https://creatingcontents-backened-production.up.railway.app/storage/images/', '', $imageUrl);
                         $newImagePaths[] = $fileName;
                     }
                 }
