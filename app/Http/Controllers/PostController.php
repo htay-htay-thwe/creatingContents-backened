@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\Like;
@@ -18,9 +17,9 @@ class PostController extends Controller
     public function postCreate(Request $request)
     {
         $post = Post::create([
-            'userId' => $request->userId,
-            'genre' => $request->genre,
-            'title' => $request->title,
+            'userId'  => $request->userId,
+            'genre'   => $request->genre,
+            'title'   => $request->title,
             'content' => $request->content,
 
         ]);
@@ -31,13 +30,13 @@ class PostController extends Controller
                 $post->images()->create(['path' => $fileName]);
             }
         }
-        $userId = 1;
-        $data = $this->getCommonData($userId);
+        $userId   = 1;
+        $data     = $this->getCommonData($userId);
         $postAuth = $data->where('userId', $request->userId)->values();
 
         return response()->json([
-            'success' => true,
-            'post' => $data,
+            'success'  => true,
+            'post'     => $data,
             'postAuth' => $postAuth,
         ]);
 
@@ -59,7 +58,7 @@ class PostController extends Controller
             $searchResults = $searchResults->values();
             return response()->json([
                 'success' => true,
-                'search' => $searchResults,
+                'search'  => $searchResults,
             ]);
 
         } else {
@@ -73,7 +72,7 @@ class PostController extends Controller
     public function genreSearch($userId, $genre, Request $request)
     {
         if ($this->checkToken($request)) {
-            $data = $this->getCommonData($userId);
+            $data          = $this->getCommonData($userId);
             $searchResults = $data->filter(function ($item) use ($genre) {
                 return (
                     stripos($item['genre'] ?? '', $genre) !== false
@@ -82,7 +81,7 @@ class PostController extends Controller
             $searchResults = $searchResults->values();
             return response()->json([
                 'success' => true,
-                'search' => $searchResults,
+                'search'  => $searchResults,
             ]);
 
         } else {
@@ -95,23 +94,24 @@ class PostController extends Controller
 
     public function getProfilePost($userId, Request $request)
     {
+        logger('hi');
         if ($this->checkToken($request)) {
-            $data = $this->getCommonData($userId);
-            $postAuth = $data->where('userId', $userId)->values();
-            $deleted = $this->getArchiveData($userId);
+            $data         = $this->getCommonData($userId);
+            $postAuth     = $data->where('userId', $userId)->values();
+            $deleted      = $this->getArchiveData($userId);
             $deletedPosts = $deleted->where('userId', $userId)->values();
-            $view = View::count();
-            $save = $data->where('save', 0)->whereNotNull('save')->where('AuthId', $userId)->values();
-
+            $view         = View::count();
+            $save         = $data->where('save', 0)->whereNotNull('save')->where('AuthId', $userId)->values();
+            logger('true');
             return response()->json([
-                'success' => true,
-                'post' => $data,
-                'postAuth' => $postAuth,
+                'success'      => true,
+                'post'         => $data,
+                'postAuth'     => $postAuth,
                 'deletedPosts' => $deletedPosts,
-                'view' => $view,
-                'save' => $save,
+                'view'         => $view,
+                'save'         => $save,
             ]);
-        };
+        }
 
     }
 
@@ -124,7 +124,7 @@ class PostController extends Controller
             $post = $data->where('id', $postId)->first();
             return response()->json([
                 'success' => true,
-                'post' => $post,
+                'post'    => $post,
 
             ]);
         }
@@ -136,9 +136,9 @@ class PostController extends Controller
         if ($this->checkToken($request)) {
             $post = Post::findOrFail($request->postId);
             $post->update([
-                'userId' => $request->userId,
-                'genre' => $request->genre,
-                'title' => $request->title,
+                'userId'  => $request->userId,
+                'genre'   => $request->genre,
+                'title'   => $request->title,
                 'content' => $request->content,
             ]);
             if ($request->hasFile('images') || $request->has('imageUrls')) {
@@ -147,7 +147,7 @@ class PostController extends Controller
                 // Handle image URLs if provided (optional)
                 if ($request->has('imageUrls')) {
                     foreach ($request->imageUrls as $imageUrl) {
-                        $fileName = str_replace('http://localhost:8000/storage/images/', '', $imageUrl);
+                        $fileName        = str_replace('http://localhost:8000/storage/images/', '', $imageUrl);
                         $newImagePaths[] = $fileName;
                     }
                 }
@@ -162,7 +162,7 @@ class PostController extends Controller
                 }
 
                 foreach ($post->images as $oldImage) {
-                    if (!in_array($oldImage->path, $newImagePaths)) {
+                    if (! in_array($oldImage->path, $newImagePaths)) {
                         $oldImagePath = 'public/images/' . $oldImage->path;
                         if (Storage::exists($oldImagePath)) {
                             Storage::delete($oldImagePath); // Delete image file
@@ -172,7 +172,7 @@ class PostController extends Controller
                 }
 
                 foreach ($newImagePaths as $fileName) {
-                    if (!$post->images()->where('path', $fileName)->exists()) {
+                    if (! $post->images()->where('path', $fileName)->exists()) {
                         $post->images()->create(['path' => $fileName]);
                     }
                 }
@@ -180,12 +180,12 @@ class PostController extends Controller
 
             $post->update($request->except(['images', 'imageUrls']));
 
-            $userId = $request->userId;
-            $data = $this->getCommonData($userId);
+            $userId   = $request->userId;
+            $data     = $this->getCommonData($userId);
             $postAuth = $data->where('userId', $request->userId)->values();
             return response()->json([
-                'success' => true,
-                'post' => $data,
+                'success'  => true,
+                'post'     => $data,
                 'postAuth' => $postAuth,
             ]);
         }
@@ -222,7 +222,7 @@ class PostController extends Controller
             $data = $this->getCommonData($userId);
             $post = $data->where('id', $postId)->first();
             return response()->json([
-                'success' => true,
+                'success'  => true,
                 'readPost' => $post,
             ]);
         }
@@ -258,30 +258,30 @@ class PostController extends Controller
             'posts.deleted_at')
             ->get()->groupBy('id')
             ->map(function ($group) {
-                $postId = $group[0]->id;
-                $viewsCount = View::where('postId', $postId)->count();
-                $likeCount = Like::where('post_id', $postId)->where('like', 0)->count();
+                $postId      = $group[0]->id;
+                $viewsCount  = View::where('postId', $postId)->count();
+                $likeCount   = Like::where('post_id', $postId)->where('like', 0)->count();
                 $unLikeCount = Like::where('post_id', $postId)->where('like', 1)->count();
-                $like = $likeCount - $unLikeCount;
+                $like        = $likeCount - $unLikeCount;
 
                 return [
-                    'id' => $group[0]->id,
-                    'userId' => $group[0]->userId,
-                    'userName' => $group[0]->name,
+                    'id'            => $group[0]->id,
+                    'userId'        => $group[0]->userId,
+                    'userName'      => $group[0]->name,
                     'writerProfile' => $group[0]->writerProfile,
-                    'email' => $group[0]->email,
-                    'AuthId' => $group[0]->AuthId,
-                    'genre' => $group[0]->genre,
-                    'title' => $group[0]->title,
-                    'content' => $group[0]->content,
-                    'views' => $viewsCount,
-                    'save' => $group[0]->save,
-                    'likeCount' => $like,
-                    'like' => $group[0]->like,
-                    'created_at' => $group[0]->created_at,
-                    'images' => $group->map(function ($item) {
+                    'email'         => $group[0]->email,
+                    'AuthId'        => $group[0]->AuthId,
+                    'genre'         => $group[0]->genre,
+                    'title'         => $group[0]->title,
+                    'content'       => $group[0]->content,
+                    'views'         => $viewsCount,
+                    'save'          => $group[0]->save,
+                    'likeCount'     => $like,
+                    'like'          => $group[0]->like,
+                    'created_at'    => $group[0]->created_at,
+                    'images'        => $group->map(function ($item) {
                         return [
-                            'id' => $item->id,
+                            'id'    => $item->id,
                             'image' => $item->path,
                         ];
                     })->unique('image')->filter()->values()->toArray(), // Get an array of image paths
@@ -311,24 +311,24 @@ class PostController extends Controller
                 'posts.deleted_at')
             ->onlyTrashed()->get()->groupBy('id')
             ->map(function ($group) use ($userId) {
-                $postId = $group[0]->id;
+                $postId     = $group[0]->id;
                 $viewsCount = View::where('postId', $postId)->count();
                 return [
-                    'id' => $group[0]->id,
-                    'userId' => $group[0]->userId,
-                    'userName' => $group[0]->name,
+                    'id'            => $group[0]->id,
+                    'userId'        => $group[0]->userId,
+                    'userName'      => $group[0]->name,
                     'writerProfile' => $group[0]->writerProfile,
-                    'email' => $group[0]->email,
-                    'genre' => $group[0]->genre,
-                    'title' => $group[0]->title,
-                    'content' => $group[0]->content,
-                    'views' => $viewsCount,
-                    'AuthId' => $userId,
-                    'created_at' => $group[0]->created_at,
-                    'deleted_at' => $group[0]->deleted_at,
-                    'images' => $group->map(function ($item) {
+                    'email'         => $group[0]->email,
+                    'genre'         => $group[0]->genre,
+                    'title'         => $group[0]->title,
+                    'content'       => $group[0]->content,
+                    'views'         => $viewsCount,
+                    'AuthId'        => $userId,
+                    'created_at'    => $group[0]->created_at,
+                    'deleted_at'    => $group[0]->deleted_at,
+                    'images'        => $group->map(function ($item) {
                         return [
-                            'id' => $item->id, // Image or product ID
+                            'id'    => $item->id,   // Image or product ID
                             'image' => $item->path, // Image URL
                         ];
                     })->unique('image')->filter()->values()->toArray(), // Get an array of image paths
@@ -340,7 +340,7 @@ class PostController extends Controller
     private function checkToken($request)
     {
         $token = $request->bearerToken(); // Get the token from the Authorization header
-
+        logger($token);
         try {
             $user = JWTAuth::checkOrFail($token);
             // Token is valid, return user information
