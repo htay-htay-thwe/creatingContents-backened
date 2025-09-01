@@ -126,7 +126,7 @@ This will execute the PHPUnit tests to ensure the integrity of your application.
 
 ---
 
-### 📌 Notes for Employers
+### 📌 
 
 This backend project is designed to work seamlessly with the [CreatingContents Frontend](https://github.com/htay-htay-thwe/creatingContents-frontend), providing a full-stack solution for content management. The use of Docker ensures a consistent development environment, making it easy to set up and collaborate on.
 
