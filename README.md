@@ -50,8 +50,6 @@ creatingContents-backened/
 ├── package.json          # Node.js dependencies
 └── vite.config.js        # Vite configuration for frontend assets
 
-````
-
 ---
 
 ## ⚙️ Installation & Setup
