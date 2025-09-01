@@ -1,4 +1,4 @@
-```markdown
+
 # 🛠️ CreatingContents Backend
 
 A robust backend API built with **Laravel**, designed to manage and serve content for the CreatingContents platform. This project demonstrates proficiency in modern PHP development, API design, and database management.
@@ -26,7 +26,7 @@ A robust backend API built with **Laravel**, designed to manage and serve conten
 
 ## 📂 Project Structure
 
-```
+
 
 creatingContents-backened/
 ├── app/                  # Core application logic
