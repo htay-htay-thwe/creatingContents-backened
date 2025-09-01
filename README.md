@@ -27,7 +27,7 @@ A robust backend API built with **Laravel**, designed to manage and serve conten
 ## 📂 Project Structure
 
 
-
+```
 creatingContents-backened/
 ├── app/                  # Core application logic
 ├── bootstrap/            # Application bootstrapping
@@ -51,7 +51,7 @@ creatingContents-backened/
 └── vite.config.js        # Vite configuration for frontend assets
 
 ---
-
+```
 ## ⚙️ Installation & Setup
 
 ### Clone the repository
