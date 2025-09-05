@@ -39,9 +39,6 @@ RUN php artisan config:clear && \
     composer dump-autoload
 
 
-
-RUN php artisan storage:link
-
 EXPOSE 8000
 
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
+CMD php artisan storage:link && php artisan serve --host=0.0.0.0 --port=8000
